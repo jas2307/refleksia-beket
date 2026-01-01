@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БИІКТІК БЕКЕТІ - ТҮЗЕТІЛГЕН ЖҮЙЕ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .mountain-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center 40%;
+            filter: brightness(0.8);
+        }
+
+        .hologram-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 50px rgba(0, 100, 255, 0.3);
+            border-radius: 40px;
+            width: 90%;
+            max-width: 850px;
+            padding: 3rem;
+            color: #fff;
+            position: relative;
+        }
+
+        .main-title {
+            font-size: 4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            background: linear-gradient(to bottom, #ffffff 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.6));
+            margin-bottom: 0;
+            line-height: 1;
+        }
+
+        .sub-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2em;
+            color: #ffffff;
+            margin-top: 0.5rem;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 24px;
+        }
+
+        .option-btn:hover {
+            background: rgba(59, 130, 246, 0.5);
+            border-color: #ffffff;
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        .bar {
+            width: 60px;
+            border-radius: 12px 12px 2px 2px;
+            transition: height 1s cubic-bezier(0.1, 0.7, 0.1, 1);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+
+        input, textarea {
+            background: rgba(0, 0, 0, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+    </style>
+</head>
+<body onclick="unlockAudio()">
+
+    <div class="mountain-bg"></div>
+
+    <div id="app" class="hologram-card">
+        <div class="text-center mb-10">
+            <h1 class="main-title italic">БИІКТІК БЕКЕТІ</h1>
+            <p class="sub-title">РЕФЛЕКСИЯ</p>
+        </div>
+
+        <div id="step-login" class="space-y-8 max-w-sm mx-auto text-center">
+            <input type="text" id="student-name" placeholder="ЕСІМІҢІЗ..." 
+                   class="w-full p-5 text-center rounded-2xl outline-none uppercase text-xl border-white/20">
+            <button onclick="startReflection()" class="w-full py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 transition-all uppercase tracking-widest shadow-lg">Экспедицияны бастау</button>
+            <p class="text-[11px] text-white/50 font-bold uppercase tracking-[0.3em]">Қатысушылар: <span id="student-counter" class="text-blue-400">0</span></p>
+        </div>
+
+        <div id="step-select" class="hidden space-y-10">
+            <div class="grid grid-cols-3 gap-6">
+                <button onclick="selectStatus('peak')" class="option-btn p-8 flex flex-col items-center">
+                    <span class="text-6xl mb-3">🏔️</span>
+                    <span class="text-[12px] font-black uppercase tracking-widest">Шың</span>
+                </button>
+                <button onclick="selectStatus('climbing')" class="option-btn p-8 flex flex-col items-center">
+                    <span class="text-6xl mb-3">🧗</span>
+                    <span class="text-[12px] font-black uppercase tracking-widest">Жота</span>
+                </button>
+                <button onclick="selectStatus('camp')" class="option-btn p-8 flex flex-col items-center">
+                    <span class="text-6xl mb-3">🏕️</span>
+                    <span class="text-[12px] font-black uppercase tracking-widest">Етек</span>
+                </button>
+            </div>
+
+            <div id="comment-area" class="hidden space-y-6">
+                <textarea id="additional-info" placeholder="Пікір қалдыру (міндетті емес)..." 
+                          class="w-full p-6 rounded-2xl h-32 outline-none text-white text-lg"></textarea>
+                <button onclick="submitReflection()" class="w-full py-5 bg-blue-600 text-white font-black rounded-2xl shadow-xl hover:bg-white hover:text-blue-600 transition-all uppercase tracking-widest">Нәтижені жіберу</button>
+            </div>
+        </div>
+
+        <div id="step-results" class="hidden space-y-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="bg-black/30 p-8 rounded-3xl flex items-end justify-around h-60 border border-white/10">
+                    <div class="flex flex-col items-center">
+                        <div id="bar-peak" class="bar bg-blue-400" style="height: 0%"></div>
+                        <span class="text-[10px] mt-3 font-black uppercase text-blue-300">Шың</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div id="bar-climbing" class="bar bg-blue-300" style="height: 0%"></div>
+                        <span class="text-[10px] mt-3 font-black uppercase text-blue-200">Жота</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div id="bar-camp" class="bar bg-slate-400" style="height: 0%"></div>
+                        <span class="text-[10px] mt-3 font-black uppercase text-slate-300">Етек</span>
+                    </div>
+                </div>
+                <div id="results-list" class="max-h-60 overflow-y-auto space-y-3 pr-3 custom-scroll"></div>
+            </div>
+            
+            <div class="flex gap-4">
+                <button onclick="nextStudent()" class="flex-1 py-5 bg-white text-blue-900 font-black rounded-2xl uppercase tracking-widest shadow-xl hover:scale-105 transition-all">Келесі оқушы</button>
+                <button onclick="clearData()" class="px-6 py-5 text-red-400 font-bold border border-red-400/30 rounded-2xl text-[10px] uppercase">Тазалау</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Дыбыс жүйесін жақсарту (ашық форматтағы баламалы сілтемелер)
+        const sounds = {
+            click: new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'),
+            success: new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3'),
+            reset: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3')
+        };
+
+        let audioUnlocked = false;
+        function unlockAudio() {
+            if (!audioUnlocked) {
+                Object.values(sounds).forEach(s => {
+                    s.load(); // Ресурсты жүктеуді мәжбүрлеу
+                    s.muted = true;
+                    s.play().then(() => {
+                        s.pause();
+                        s.muted = false;
+                    }).catch(e => console.log("Дыбысты іске қосу қатесі:", e));
+                });
+                audioUnlocked = true;
+            }
+        }
+
+        function playSound(type) {
+            const s = sounds[type];
+            if (s && s.readyState >= 2) {
+                s.currentTime = 0;
+                s.play().catch(e => console.log("Ойнату қатесі:", e));
+            }
+        }
+
+        let allResults = JSON.parse(localStorage.getItem('summit_data_final')) || [];
+
+        function updateCounter() {
+            document.getElementById('student-counter').innerText = allResults.length;
+        }
+        updateCounter();
+
+        function startReflection() {
+            const name = document.getElementById('student-name').value.trim();
+            if (!name) return;
+            playSound('click');
+            window.currentName = name;
+            document.getElementById('step-login').classList.add('hidden');
+            document.getElementById('step-select').classList.remove('hidden');
+        }
+
+        function selectStatus(status) {
+            playSound('click');
+            window.currentStatus = status;
+            if (status === 'peak') {
+                submitReflection();
+            } else {
+                document.getElementById('comment-area').classList.remove('hidden');
+            }
+        }
+
+        function submitReflection() {
+            playSound('success');
+            const info = document.getElementById('additional-info').value.trim();
+            
+            allResults.push({
+                name: window.currentName,
+                status: window.currentStatus,
+                info: info
+            });
+
+            localStorage.setItem('summit_data_final', JSON.stringify(allResults));
+            showResults();
+        }
+
+        function showResults() {
+            document.getElementById('step-select').classList.add('hidden');
+            document.getElementById('step-results').classList.remove('hidden');
+            
+            const counts = { peak: 0, climbing: 0, camp: 0 };
+            const listEl = document.getElementById('results-list');
+            listEl.innerHTML = '';
+
+            allResults.forEach(res => {
+                counts[res.status]++;
+                const item = document.createElement('div');
+                item.className = "p-4 bg-white/10 rounded-2xl flex justify-between items-center border border-white/10 mb-2";
+                item.innerHTML = `<div><div class="font-bold uppercase text-[12px]">${res.name}</div><div class="text-[10px] text-white/50">${res.info || ''}</div></div> 
+                                  <span class="text-xl">${res.status === 'peak' ? '🏔️' : (res.status === 'climbing' ? '🧗' : '🏕️')}</span>`;
+                listEl.prepend(item);
+            });
+
+            const total = allResults.length;
+            ['peak', 'climbing', 'camp'].forEach(key => {
+                const percent = total > 0 ? (counts[key] / total) * 100 : 0;
+                document.getElementById(`bar-${key}`).style.height = (percent > 0 ? Math.max(percent, 10) : 0) + '%';
+            });
+            
+            updateCounter();
+        }
+
+        function nextStudent() {
+            playSound('click');
+            document.getElementById('student-name').value = '';
+            document.getElementById('additional-info').value = '';
+            document.getElementById('step-results').classList.add('hidden');
+            document.getElementById('comment-area').classList.add('hidden');
+            document.getElementById('step-login').classList.remove('hidden');
+            updateCounter();
+        }
+
+        function clearData() {
+            if(confirm("Мәліметтерді өшіресіз бе?")) {
+                playSound('reset');
+                localStorage.removeItem('summit_data_final');
+                allResults = [];
+                nextStudent();
+            }
+        }
+    </script>
+</body>
+</html>
